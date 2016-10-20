@@ -230,6 +230,11 @@ extern char *sys_errlist[];
 
 #include "afio.h"
 
+/* Intra2net 2016: stringify via cpp */
+#define I2N_TO_STRING(tok) #tok
+
+/* Intra2net 2016: write verbose output to stdout instead of stderr */
+#define I2N_VERBOSE_OUT stdout
 
 /* define 1 to enable file descriptor leak debugging code */
 #define FDDEBUG 0
@@ -1251,17 +1256,17 @@ in (av)
 	      {
 		  /* we cast to double and print as floating point because
 		     %Lu printing is buggy above 4G (at least with my C library). */
-		  if(printbytepos) fprintf(stderr,"%.0f ",(double)bytepos);
+		  if(printbytepos) fprintf(I2N_VERBOSE_OUT,"%.0f ",(double)bytepos);
 
 		  if (*uncompto)
-		    res = fprintf (stderr, "%s -- uncompressed\n", uncompto);
+		    res = fprintf (I2N_VERBOSE_OUT, "%s -- uncompressed\n", uncompto);
 		  else
-		    res = fprintf (stderr, "%s -- okay\n", name);
+		    res = fprintf (I2N_VERBOSE_OUT, "%s -- okay\n", name);
 
 		  /* check for broken pipe on stderr */
 		  if(res<0) {
 		    if(errno == EPIPE)
-		      fatal("<stderr>", syserr());
+		      fatal("<" I2N_TO_STRING(I2N_VERBOSE_OUT) ">", syserr());
 		  }
 	      }
 	}
